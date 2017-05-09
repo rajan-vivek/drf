@@ -10,10 +10,11 @@ from i2x.buildmyteam.serializers import (
     UserSerializer,
     GroupSerializer,
     TeamSerializer,
+    UserVerificationSerialzer,
     # TeamMembersSerializer
 )
-from .models import Team
-from rest_framework.decorators import api_view, detail_route, list_route
+from .models import Team, UserVerification
+from rest_framework.decorators import api_view, detail_route, list_route, permission_classes
 from django.core.mail import send_mail
 from permissions import IsOwnerOrReadOnly
 from ..utility import *
@@ -144,8 +145,90 @@ def register(request):
     serializer = UserSerializer(data=data, context=serializer_context)
     if serializer.is_valid():
         serializer.save()
-        mail_success = send_registration_mail(username, email, verification_code)
+        api_url = 'http://' + request.get_host() + "/confirm_email"
+        mail_success = send_registration_mail(username, email, verification_code, api_url)
         combined_result = dict(serializer.data.items() + {'mail_success': mail_success}.items())
         return Response(combined_result, status=status.HTTP_201_CREATED)
     else:
         return Response(serializer.errors, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+
+
+@api_view(http_method_names=['POST'])
+def confirm_email(request):
+    email = request.data["email"]
+    code = request.data["code"]
+
+    user = User.objects.filter(email=email.strip().lower()).first()
+
+    # if user exists and code match is confirmed then go ahead
+    if user and user.verification.code == code.strip().upper():
+        user.verification.code = ''
+        user.verification.save()
+
+        return Response({'confirmed': 'true'}, status=status.HTTP_200_OK)
+
+    return Response({'message': "Verification code doesn't match"},
+                    status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+
+
+@api_view(http_method_names=['POST'])
+def reset(request):
+    """
+    Triggers the forgot password email having link to reset password
+    :return: HTTP status codes - 200 for success and 422 for failure
+    """
+    email = request.data['email']
+
+    if is_string_blank(email):   # return if no email is provided with 422 code
+        return Response({'message': "No email provided"},
+                        status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+
+    email = email.strip().lower()
+    verification_code = get_random_code()
+
+    user = User.objects.filter(email=email).first()
+
+    if user:
+        api_url = 'http://' + request.get_host() + "/password"
+
+        user.verification.code = verification_code
+        user.verification.save()
+
+        send_forgot_password_mail(user.first_name, email, verification_code, api_url)
+
+        return Response(status=status.HTTP_200_OK)
+
+    return Response({'message': "User with email:" + email + " don't exist in our system "},
+                    status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+
+
+@api_view(http_method_names=['POST'])
+@permission_classes((IsOwnerOrReadOnly, ))
+def password(request):
+    """
+    User can set the password from here using verification CODE provided in the email
+    :return: HTTP status codes - 200 for success and 422 for failure
+    """
+    email = request.data["email"]
+    new_password = request.data["password"]
+    code = request.data["code"]
+
+    if is_string_blank(email) or is_string_blank(new_password) or is_string_blank(code):
+        return Response({'message': 'All email, password and code is needed'},
+                        status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+
+    email = email.strip().lower()
+    user = User.objects.filter(email=email).first()
+
+    if user and user.verification.code == code.strip().upper():
+        user.set_password(new_password)
+        user.save()
+
+        user.verification.code = ''
+        user.verification.save()
+
+        password_changed_mail(user.first_name, email)  # update user about password change
+        return Response(status=status.HTTP_200_OK)
+
+    return Response({"message": "Either email or code doesn't match"},
+                    status=status.HTTP_422_UNPROCESSABLE_ENTITY)

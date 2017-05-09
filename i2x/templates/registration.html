@@ -5,12 +5,15 @@ Hello <strong>{{ username }}</strong>,
 </p>
 <p>
     Your verification code is <strong>{{ code }}</strong> in case you want to verify manually.
+    <div><strong>Note:</strong> Above verification code is for API hosted at - <a href="{{ api_url }}">{{ api_url }}</a> </div>
 </p>
 <p>
     Or
 </p>
 <p>
-    You can click <a href="{{ verification_link }}">here</a> to verify immediately.
+    <div>You can click below to verify quickly:</div>
+    <a href="{{ verification_link }}">{{ verification_link }}</a>
+    <div><strong>Note:</strong> Above URL for web app and not for API</div>
 </p>
 <p>
     Do you know that you could do following cool things using your account ?
@@ -28,5 +31,6 @@ Hello <strong>{{ username }}</strong>,
 
 <p>
     Thanks,
+    <br />
     BuildYourTeam
 </p>

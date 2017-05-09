@@ -40,6 +40,12 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'name')
 
 
+class UserVerificationSerialzer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = UserVerification
+        fields = ('user_id', 'code')
+
+
 class TeamSerializer(serializers.HyperlinkedModelSerializer):
 
     # members = UserSerializer(many=True, read_only=False, allow_null=True)

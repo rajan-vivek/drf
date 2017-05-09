@@ -36,6 +36,11 @@ urlpatterns = [
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^docs/', include_docs_urls(title='BuildMyTeam API')),
     url(r'^register/', views.register),
+    url(r'^confirm_email/', views.confirm_email),
+    url(r'^reset/', views.reset),
+    url(r'^password/', views.password),
+
+
     # url(r'^add-member/$', views.AddTeamMemberView.as_view()),
     # url(r'^teams/{pk}/add-member/$', views.TeamViewset.add_member),
 

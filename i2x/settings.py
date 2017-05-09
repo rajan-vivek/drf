@@ -130,15 +130,18 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'vivekrajan555@gmail.com'
-EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST = 'smtp.mailtrap.io'
+EMAIL_PORT = 2525
+EMAIL_HOST_USER = 'f854fcc59eb5f0'
+EMAIL_HOST_PASSWORD = '535b1a0918d1d1'
 EMAIL_USE_TLS = True
 EMAIL_TIMEOUT = 60000
 
-REGISTRATION_EMAIL = {
-    'SUBJECT': 'Welcome to BuildYourTeam',
+EMAIL_SUBJECTS = {
+    'SUBJECT_REGISTRATION': 'Welcome to BuildYourTeam',
+    'SUBJECT_FORGOT_PASSWORD': 'BuildYourTeam Password Assistance',
+    'SUBJECT_PASSWORD_CHANGED': 'Password changed successfully',
 }
 
 BASE_WEBSITE_URL = "http://127.0.0.1:8000"
+
