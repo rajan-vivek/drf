@@ -137,6 +137,7 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'i2x'),
 )
 
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.mailtrap.io'
 EMAIL_PORT = 2525
