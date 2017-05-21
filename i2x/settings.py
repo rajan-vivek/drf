@@ -14,6 +14,7 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
@@ -26,7 +27,7 @@ STATICFILES_DIRS = (
 SECRET_KEY = '^5_+#t0bk=tmnwvm^7-e9qa&6t$r9t-tbb=eij(qqf0j8z%o1e'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']     # for demo purpose allow all else follow below schemes
 # ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'infinite-anchorage-16636.herokuapp.com']
@@ -130,13 +131,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'i2x/static')
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'i2x'),
+    os.path.join(PROJECT_ROOT, 'static'),
 )
 
+# https://warehouse.python.org/project/whitenoise/
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.mailtrap.io'
