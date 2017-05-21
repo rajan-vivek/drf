@@ -18,6 +18,7 @@ from django.contrib import admin
 from rest_framework import routers
 from i2x.buildmyteam import views
 from rest_framework.documentation import include_docs_urls
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 # urlpatterns = [
 #     url(r'^admin/', admin.site.urls),
@@ -46,3 +47,6 @@ urlpatterns = [
 
     # url(r'^test/$', views.TeamViewset.get_test.as_view())
 ]
+urlpatterns += staticfiles_urlpatterns()
+
+# urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)  # in case of media

@@ -15,8 +15,9 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -25,10 +26,10 @@ STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 SECRET_KEY = '^5_+#t0bk=tmnwvm^7-e9qa&6t$r9t-tbb=eij(qqf0j8z%o1e'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'infinite-anchorage-16636.herokuapp.com']
-
+ALLOWED_HOSTS = ['*']     # for demo purpose allow all else follow below schemes
+# ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'infinite-anchorage-16636.herokuapp.com']
 
 # Application definition
 
