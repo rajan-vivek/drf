@@ -50,7 +50,32 @@ def send_registration_mail(username, email, code, api_url):
 
     try:
         send_mail(subject, message, from_email, [recipient], fail_silently=False,
-                  html_message=message)
+                  html_message=message)     # FIXME: either use separate thread or celery
+    except SMTPException as e:
+        return False
+
+    return True
+
+
+def send_invitation_mail(invited_by, email, code, api_url):
+    subject = settings.EMAIL_SUBJECTS['SUBJECT_INVITATION']
+    from_email = settings.EMAIL_HOST_USER
+    recipient = email
+
+    email_context = {
+        'invited_by': invited_by,
+        'recipient': recipient,
+        'code': code,
+        'api_url': api_url,
+        'verification_link': settings.BASE_WEBSITE_URL +
+                             "/website/confirm_email?code=" + code + "&email=" + email
+    }
+
+    message = get_template('invitation.html').render(email_context)
+
+    try:
+        send_mail(subject, message, from_email, [recipient], fail_silently=False,
+                  html_message=message)     # FIXME: either use separate thread or celery
     except SMTPException as e:
         return False
 
@@ -74,7 +99,7 @@ def send_forgot_password_mail(name, email, code, api_url):
 
     try:
         send_mail(subject, message, from_email, [recipient], fail_silently=False,
-                  html_message=message)
+                  html_message=message)     # FIXME: either use separate thread or celery
     except SMTPException as e:
         return False
 
@@ -94,7 +119,7 @@ def password_changed_mail(name, email):
 
     try:
         send_mail(subject, message, from_email, [recipient], fail_silently=False,
-                  html_message=message)
+                  html_message=message)     # FIXME: either use separate thread or celery
     except SMTPException as e:
         return False
 

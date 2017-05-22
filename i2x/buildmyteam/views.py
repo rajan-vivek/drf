@@ -109,17 +109,27 @@ class AddTeamMemberView(APIView):
     metadata_class = Team
     permission_classes = [IsOwnerOrReadOnly]
 
-    # def get_serializer(self, *args, **kwargs):
-    #     """
-    #     Return the serializer instance that should be used for validating and
-    #     deserializing input, and for serializing output.
-    #     """
-    #     serializer_class = TeamMembersSerializer
-    #     # kwargs['context'] = self.get_serializer_context()
-    #     return serializer_class(*args, **kwargs)
+    def get_object(self, pk):
+        try:
+            return Team.objects.get(pk=pk)
+        except Team.DoesNotExist:
+            raise status.Http404
 
-    def post(self, request, format=None):
-        serializer = TeamSerializer(data=request.data)
+    def put(self, request, pk, format=None):
+
+        team = self.get_object(pk)
+
+        serializer_context = {
+            'request': request,
+            'name': team.name
+        }
+
+        request_data = request.data
+
+        if request_data.get("name") is None:
+            request_data["name"] = team.name
+
+        serializer = TeamSerializer(team, data=request.data, context=serializer_context)
 
         if serializer.is_valid():
             serializer.save()
@@ -175,6 +185,7 @@ def confirm_email(request):
 def reset(request):
     """
     Triggers the forgot password email having link to reset password
+    :param: email
     :return: HTTP status codes - 200 for success and 422 for failure
     """
     email = request.data['email']
@@ -204,7 +215,7 @@ def reset(request):
 
 @api_view(http_method_names=['POST'])
 @permission_classes((IsOwnerOrReadOnly, ))
-def password(request):
+def change_password(request):
     """
     User can set the password from here using verification CODE provided in the email
     :return: HTTP status codes - 200 for success and 422 for failure

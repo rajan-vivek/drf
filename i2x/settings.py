@@ -42,13 +42,19 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'i2x.buildmyteam',
     'django_extensions',
+    'rest_framework_swagger',
 ]
 
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAdminUser',
+        'rest_framework.permissions.IsAuthenticated',
     ],
     'PAGE_SIZE': 10
 }
@@ -127,6 +133,8 @@ USE_L10N = True
 
 USE_TZ = True
 
+LOGIN_URL = 'rest_framework:login'
+LOGOUT_URL = 'rest_framework:logout'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
@@ -153,6 +161,7 @@ EMAIL_SUBJECTS = {
     'SUBJECT_REGISTRATION': 'Welcome to BuildYourTeam',
     'SUBJECT_FORGOT_PASSWORD': 'BuildYourTeam Password Assistance',
     'SUBJECT_PASSWORD_CHANGED': 'Password changed successfully',
+    'SUBJECT_INVITATION': 'You have been invited',
 }
 
 BASE_WEBSITE_URL = "http://127.0.0.1:8000"

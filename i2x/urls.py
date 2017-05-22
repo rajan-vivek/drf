@@ -19,30 +19,35 @@ from rest_framework import routers
 from i2x.buildmyteam import views
 from rest_framework.documentation import include_docs_urls
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-
-# urlpatterns = [
-#     url(r'^admin/', admin.site.urls),
-# ]
+from django.contrib.auth.views import login, logout
+from rest_framework_swagger.views import get_swagger_view
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewset)
 router.register(r'groups', views.GroupViewset)
 router.register(r'teams', views.TeamViewset)
 
+schema_view = get_swagger_view(title='Pastebin API')
+
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
+    # url(r'^$', schema_view),
     url(r'^admin/', admin.site.urls),
     url(r'^', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^docs/', include_docs_urls(title='BuildMyTeam API')),
+    url(r'^docs/', schema_view),
+    # url(r'^docs/', include_docs_urls(title='BuildMyTeam API')),
+    # url(r'^docs/', include('rest_framework_docs.urls')),
     url(r'^register/', views.register),
     url(r'^confirm_email/', views.confirm_email),
     url(r'^reset/', views.reset),
-    url(r'^password/', views.password),
+    url(r'^password/', views.change_password),
+    url(r'^login/', login),
+    url(r'^logout/', logout),
 
 
-    # url(r'^add-member/$', views.AddTeamMemberView.as_view()),
+    url(r'^add-member/(?P<pk>[0-9]+)/$', views.AddTeamMemberView.as_view()),
     # url(r'^teams/{pk}/add-member/$', views.TeamViewset.add_member),
 
     # url(r'^test/$', views.TeamViewset.get_test.as_view())
